@@ -33,7 +33,7 @@ resource "aws_security_group" "sg_ssh_http_https_anywhere" {
   }
 }
 
-resource "aws_instance" "test http_s instance" {
+resource "aws_instance" "test-web-instance" {
   ami = "ami-06b09bfacae1453cb" # Replace with your image. Here use Amazon Linux 2023 AMI 2023.1.20230629.0 x86_64 HVM kernel-6.1
   instance_type = "t2.micro"  # Replace with your desired instance type
 
@@ -97,4 +97,8 @@ resource "aws_instance" "test http_s instance" {
     </html>" > index.html
   EOF
   vpc_security_group_ids = [aws_security_group.sg_ssh_http_https_anywhere.id]
+}
+
+output "public_ip" {
+  value = aws_instance.test-web-instance.public_ip
 }
