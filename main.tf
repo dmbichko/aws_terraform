@@ -43,9 +43,12 @@ resource "aws_instance" "test-web-instance" {
   user_data = <<-EOF
     #!/bin/bash
     yum update -y
-    yum install httpd -y
+    yum install httpd unzip -y
     systemctl start httpd
     systemctl enable httpd
+    curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+    unzip awscliv2.zip
+    sudo ./aws/install
     cd /var/www/html
 
     # Fetch instance metadata using the token
@@ -53,6 +56,8 @@ resource "aws_instance" "test-web-instance" {
     PUBLIC_IP=$(curl -s -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/meta-data/public-ipv4)
     INSTANCE_ID=$(curl -s -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/meta-data/instance-id)
     INSTANCE_TYPE=$(curl -s -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/meta-data/instance-type)
+    AVAILABILITY_ZONE=$(curl -s -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/meta-data/placement/availability-zone)
+    PRIVATE_IP=$(curl -s -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/meta-data/local-ipv4)
 
     # Create index.html
     echo "<!DOCTYPE html>
@@ -93,6 +98,12 @@ resource "aws_instance" "test-web-instance" {
 
       <h2>Instance Type:</h2>
       <pre class=\"green\">$INSTANCE_TYPE</pre>
+      
+      <h2>Availability Zone:</h2>
+      <pre class=\"green\">$AVAILABILITY_ZONE</pre>
+
+      <h2>Private IP:</h2>
+      <pre class=\"green\">$PRIVATE_IP</pre>
     </body>
     </html>" > index.html
   EOF
