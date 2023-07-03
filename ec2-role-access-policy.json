@@ -1,0 +1,10 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+      {
+        "Effect": "Allow",
+        "Action": ["s3:cfst-3035-46c4f643453e9cde1b043f1716a-s3bucketdev-bsho8gm7r6ca"],
+        "Resource": ["*"]
+      }
+    ]
+}
